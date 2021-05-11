@@ -145,3 +145,6 @@ Thumbs.db
 
 # profiling data
 .prof
+
+# any examples output
+examples/*

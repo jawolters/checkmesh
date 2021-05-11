@@ -12,3 +12,6 @@ checkmesh.save('mesh_analysis.vtk', mesh, data)
 
 #visualize
 checkmesh.show_scalar_field('mesh_analysis.vtk', 'edge_ratio')
+
+#plot histogram of metric
+checkmesh.plot_histogram(edge_ratio, 'edge ratio', filename='edge_ratio.pdf')

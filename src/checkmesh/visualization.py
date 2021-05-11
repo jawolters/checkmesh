@@ -1,6 +1,12 @@
 
 from vtk import vtkUnstructuredGridReader, vtkScalarBarActor, vtkColorTransferFunction, vtkLookupTable, vtkDataSetMapper, vtkActor, vtkRenderer, vtkRenderWindow, vtkRenderWindowInteractor
 from matplotlib import cm
+import matplotlib.pyplot as plt
+import numpy as np
+
+def beautify_string(s):
+    s = s.capitalize()
+    s = s.replace('_',' ')
 
 def show_scalar_field(filename, scalarname, show_mesh=False):
     ncolors = 256
@@ -16,7 +22,7 @@ def show_scalar_field(filename, scalarname, show_mesh=False):
         if scalarname == output.GetCellData().GetArrayName(i):
             scalarname_found = True
     if not scalarname_found:
-        raise ValueError('Could not find scalar "%s" in the vtk file.'%scalarname)
+        raise dataError('Could not find scalar "%s" in the vtk file.'%scalarname)
 
     ctf = vtkColorTransferFunction()
     ctf.SetColorSpaceToRGB()
@@ -81,3 +87,33 @@ def show_scalar_field(filename, scalarname, show_mesh=False):
     interactor.SetRenderWindow(renderer_window)
     interactor.Initialize()
     interactor.Start()
+
+def plot_histogram(data, xlabel, filename=None):
+    cut = [np.quantile(data, 0.25), np.quantile(data, 0.5), np.quantile(data, 0.75)]
+    fig, ((ax1,ax2),(ax3,ax4)) = plt.subplots(nrows=2,ncols=2)
+    frq, edges = np.histogram(data)
+    ax1.bar(edges[:-1], frq, width = np.diff(edges), edgecolor = "black",
+            align = "edge")
+    ax1.set_title('%s '%xlabel)
+    frq, edges = np.histogram(data[data>cut[0]])
+    ax2.bar(edges[:-1], frq, width = np.diff(edges), edgecolor = "black",
+            align = "edge")
+    ax2.set_title('%s > %.2f'%(xlabel,cut[0]))
+    frq, edges = np.histogram(data[data>cut[1]])
+    ax3.bar(edges[:-1], frq, width = np.diff(edges), edgecolor = "black",
+            align = "edge")
+    ax3.set_title('%s > %.2f'%(xlabel,cut[1]))
+    frq, edges = np.histogram(data[data>cut[2]])
+    ax4.bar(edges[:-1], frq, width = np.diff(edges), edgecolor = "black",
+            align = "edge")
+    ax4.set_title('%s > %.2f'%(xlabel,cut[2]))
+    ax3.set_xlabel('%s'%xlabel)
+    ax1.set_ylabel('frequency')
+    ax4.set_xlabel('%s'%xlabel)
+    ax3.set_ylabel('frequency')
+    fig.suptitle('Histogram of %s'%xlabel)
+    fig.tight_layout()
+    if filename: 
+        if not filename.endswith('.pdf'): filename += '.pdf'
+        plt.savefig(filename, dpi=150, format='pdf')
+    plt.show()
