@@ -3,8 +3,8 @@ import meshio
 
 def load(filename):
     file = meshio.read(filename)
-    file.cells = np.asarray(file.get_cells_type('tetra'))
-    file.points = np.asarray(file.points)
+    file.cells = np.asarray(file.get_cells_type('tetra'), dtype=np.int32)
+    file.points = np.asarray(file.points, dtype=np.float64)
     return file
 
 def save(filename, mesh, data, format="vtk"):

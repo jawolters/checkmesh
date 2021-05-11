@@ -10,13 +10,20 @@ Currently supported quality checks:
 
 ---
 
-Minimal `edge_ratios.py` example 
-```
+Minimal `examples/edge_ratio.py` example 
+```Python
 import checkmesh
 
-mesh = checkmesh.load('some/file/name')
-edge_ratios = checkmesh.edge_ratio(mesh.cells, mesh.points)
-data = {'edge_ratio': [edge_ratios]}
+#load mesh file
+mesh = checkmesh.load('cube.vtk')
+
+#compute metrics and store results in a dict
+edge_ratio = checkmesh.edge_ratio(mesh.cells, mesh.points)
+data = {'edge_ratio': [edge_ratio]}
+
+#save results to vtk file
 checkmesh.save('mesh_analysis.vtk', mesh, data)
+
+#visualize
 checkmesh.show_scalar_field('mesh_analysis.vtk', 'edge_ratio')
 ```

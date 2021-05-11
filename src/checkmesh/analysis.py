@@ -4,9 +4,9 @@ from numba import prange
 
 @numba.jit(nopython=True, parallel=True, nogil=True)
 def edge_ratio(cells, points):
-    edge_ids = np.array([[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]])
+    edge_ids = np.asarray([[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]], dtype=np.int32)
     ncells = cells.shape[0]
-    ratios = np.zeros((ncells,1))
+    ratios = np.zeros((ncells,1), dtype=np.float64)
     for id in prange(ncells):
         vtx_coords = points[cells[id]]
         edge_lengths = np.sqrt(np.square(vtx_coords[edge_ids[:,0],:] - vtx_coords[edge_ids[:,1],:]).sum(axis=1))

@@ -33,15 +33,14 @@ def show_scalar_field(filename, scalarname, show_mesh=False):
         lut.SetTableValue(i,rgb)   
 
     output_port = reader.GetOutputPort()
-    scalar_range = output.GetScalarRange()
-
-    mapper = vtkDataSetMapper()
+    mapper = vtkDataSetMapper()    
     mapper.SetInputConnection(output_port)
-    mapper.SetScalarRange(scalar_range)
+    mapper.ScalarVisibilityOn()
     mapper.SetColorModeToMapScalars()
     mapper.SetLookupTable(lut)
-    mapper.SetScalarModeToUsePointFieldData()
+    mapper.SetScalarModeToUseCellFieldData()
     mapper.SelectColorArray(scalarname)
+    mapper.SetScalarRange(output.GetCellData().GetArray(scalarname).GetRange())    
 
     scalarBar = vtkScalarBarActor()
     scalarBar.SetLookupTable(mapper.GetLookupTable())
